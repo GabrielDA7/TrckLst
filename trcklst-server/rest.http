@@ -1,0 +1,74 @@
+
+
+
+GET http://localhost:4040/api/health-check
+
+### GET AUTH LINK
+
+GET http://localhost:4040/api/auth/spotify-auth-link
+
+###  REGISTER SPOTIFY USER
+POST http://localhost:4040/api/auth/register-spotify-user HTTP/1.1
+Content-Type: application/json
+
+{
+    "code": "AQAhMOnq1HAXasuXxgFF9CG4j_acqwWeD4AKxmGnDa-oBPkulFomOwPbUvaqADugWChJLa8XlyreNFbr_tzkaGNGcLZ1RDV1ijeEB0XraR0Fw1cRQXNzSAC9Aespmi7YtkK1Et0btapY6sg385d-_99ymkI_-QO8lHVOPLLqtnqoeADiiobxkzabRBpkgPMbTndmzgOAJPl7e7n0R5NVLgD7Cx5oK2oWd9L_FZn9m0rG9QX3Jgw56WI5spd46hpaaIGAC30s41enecbDNuq2Jjqm1lfI7d7H5brg3SWCnwcz-0chgt0x2vPG7Rb56jTkNUTIAEbef7lDnNnRPA18bv1lQ7QMMyvfBahk3nnMN91LLPsMIK7cM53pFg8ZvBu3CuYvgeE",
+    "state": "a2977dc5-7ec4-485b-a197-5eebe5db316d"
+}
+###
+
+
+### GET SPOTIFY USER DEVICES
+
+GET http://localhost:4040/api/devices
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Y2U0NjYyYjY0ODIyYzM0NGQxMWQ2NjgiLCJzcG90aWZ5X3Rva2VuX2V4cGlyZXNfYXQiOiIyMDE5LTA1LTIxVDIxOjU3OjE1LjU4NVoiLCJjcmVhdGVkX2F0IjoiMjAxOS0wNS0yMVQyMDo1NzoxNS41OTRaIiwic3BvdGlmeV9pZCI6ImdhYnJpZWx4MjJvZ2MiLCJpYXQiOjE1NTg0NzIyMzUsImV4cCI6MTU1ODQ3NTgzNX0.8LMoP5DgEW4aRxeZoXZXTC-aTgixnJGA_Popzv6lTf4
+
+###
+
+### CREATE ROOM
+
+POST http://localhost:4040/api/rooms
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Y2U0NjYyYjY0ODIyYzM0NGQxMWQ2NjgiLCJzcG90aWZ5X3Rva2VuX2V4cGlyZXNfYXQiOiIyMDE5LTA1LTIxVDIxOjU3OjE1LjU4NVoiLCJjcmVhdGVkX2F0IjoiMjAxOS0wNS0yMVQyMDo1NzoxNS41OTRaIiwic3BvdGlmeV9pZCI6ImdhYnJpZWx4MjJvZ2MiLCJpYXQiOjE1NTg0NzIyMzUsImV4cCI6MTU1ODQ3NTgzNX0.8LMoP5DgEW4aRxeZoXZXTC-aTgixnJGA_Popzv6lTf4
+
+{
+    "name": "testPlay2",
+    "device_id": "de88033c953058317065e8ee09879f43b2223d78"
+}
+
+###
+
+
+### GET ROOM
+
+GET http://localhost:4040/api/rooms/5ce4667564822c344d11d669
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Y2U0NjYyYjY0ODIyYzM0NGQxMWQ2NjgiLCJzcG90aWZ5X3Rva2VuX2V4cGlyZXNfYXQiOiIyMDE5LTA1LTIxVDIxOjU3OjE1LjU4NVoiLCJjcmVhdGVkX2F0IjoiMjAxOS0wNS0yMVQyMDo1NzoxNS41OTRaIiwic3BvdGlmeV9pZCI6ImdhYnJpZWx4MjJvZ2MiLCJpYXQiOjE1NTg0NzIyMzUsImV4cCI6MTU1ODQ3NTgzNX0.8LMoP5DgEW4aRxeZoXZXTC-aTgixnJGA_Popzv6lTf4
+
+
+###
+
+### REGISTER GUEST USER
+
+POST http://localhost:4040/api/auth/register-guest-user
+Content-Type: application/json
+
+
+###
+
+### SEARCH
+
+GET http://localhost:4040/api/search/5ce4667564822c344d11d669/test/artist,track
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Y2U0NjYyYjY0ODIyYzM0NGQxMWQ2NjgiLCJzcG90aWZ5X3Rva2VuX2V4cGlyZXNfYXQiOiIyMDE5LTA1LTIxVDIxOjU3OjE1LjU4NVoiLCJjcmVhdGVkX2F0IjoiMjAxOS0wNS0yMVQyMDo1NzoxNS41OTRaIiwic3BvdGlmeV9pZCI6ImdhYnJpZWx4MjJvZ2MiLCJpYXQiOjE1NTg0NzIyMzUsImV4cCI6MTU1ODQ3NTgzNX0.8LMoP5DgEW4aRxeZoXZXTC-aTgixnJGA_Popzv6lTf4
+
+###
+
+### PLAY ROOM SONG
+
+GET http://localhost:4040/api/rooms/5ce4667564822c344d11d669/play
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Y2U0NjYyYjY0ODIyYzM0NGQxMWQ2NjgiLCJzcG90aWZ5X3Rva2VuX2V4cGlyZXNfYXQiOiIyMDE5LTA1LTIxVDIxOjU3OjE1LjU4NVoiLCJjcmVhdGVkX2F0IjoiMjAxOS0wNS0yMVQyMDo1NzoxNS41OTRaIiwic3BvdGlmeV9pZCI6ImdhYnJpZWx4MjJvZ2MiLCJpYXQiOjE1NTg0NzIyMzUsImV4cCI6MTU1ODQ3NTgzNX0.8LMoP5DgEW4aRxeZoXZXTC-aTgixnJGA_Popzv6lTf4
+
+
+###
