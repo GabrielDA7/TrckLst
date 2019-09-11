@@ -3,11 +3,39 @@ const { Schema, model } = require('mongoose');
 const { NOT_FOUND } = require('http-status');
 const APIError = require('../libs/apiError');
 
+const optionalCurrentTrackSchema = new Schema({
+  _id: { auto: false },
+  uri: {
+    type: String,
+    required: true,
+  },
+  artist: {
+    type: String,
+    required: true,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  image: {
+    type: String,
+    required: true,
+  }
+});
+
 /**
  * Room Schema
  */
 const RoomSchema = new Schema({
   owner_id: {
+    type: String,
+    required: true,
+  },
+  played_song_position: {
+    type: Number,
+    default: -1,
+  },
+  spotify_playlist_id: {
     type: String,
     required: true,
   },
@@ -23,24 +51,15 @@ const RoomSchema = new Schema({
     type: String,
     required: true,
   },
-  guests: [{
-      user_id: {
-          type: String,
-          required: true,
-      }
-  }],
+  currentTrack: { type: optionalCurrentTrackSchema, required: false},
   tracks: [{
     uri: {
       type: String,
       required: true,
     },
     artist: {
-        type: String,
-        required: true,
-    },
-    album: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     name: {
       type: String,
@@ -54,7 +73,7 @@ const RoomSchema = new Schema({
       type: Number,
       default: 0,
     },
-    voter: [{
+    voters: [{
       user_id: {
         type: String,
         required: true,
@@ -91,13 +110,25 @@ RoomSchema.statics = {
     return this.findById(id)
       .exec()
       .then((room) => {
-        if (room) {
+        if (room)
           return room;
-        }
-        const err = new APIError('No such room exists!', NOT_FOUND, true);
+        const err = new APIError('Room not found', NOT_FOUND, true);
         return reject(err);
       });
   },
+  upVote(roomId, track, voterId) {
+    return this.findOneAndUpdate({ "_id": roomId, "tracks.uri": track.uri }, {
+      "$push": { "tracks.$.voters": { user_id: voterId } },
+      "$inc": { "tracks.$.score": 1 }
+    }, { new: true })
+      .exec()
+      .then((room) => {
+        if (room)
+          return room;
+        const err = new APIError('Room or track not found', NOT_FOUND, true);
+        return reject(err);
+      });
+  }
 };
 
 /**

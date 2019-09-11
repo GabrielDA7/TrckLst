@@ -2,6 +2,7 @@ const SpotifyWebApi = require('../libs/spotifyWebApi');
 const { setTokens } = require('../libs/spotifyTokenManger');
 const User = require('../models/user.model');
 const httpStatus = require('http-status');
+const handleAuth = require('../libs/authHandler');
 
 /**
  * Get the spotify user devices
@@ -9,14 +10,17 @@ const httpStatus = require('http-status');
  * @param res 
  * @param next 
  */
-function get(req, res, next) {
-    User.get(res.locals.session._id)
-    .then((user) => setTokens(user))
-    .then(() => SpotifyWebApi.getMyDevices())
-    .then(data => res.status(httpStatus.OK).json(data.body))
-    .catch(e =>  next(e));
+async function get(req, res, next) {
+  try {
+    const user = await User.get(res.locals.session._id);
+    handleAuth(user);
+    await setTokens(user);
+    const data = await SpotifyWebApi.getMyDevices();
+    return res.status(httpStatus.OK).send(data.body);
+  } catch (e) {
+    next(e);
+  }
 }
-
 
 module.exports = {
   get,

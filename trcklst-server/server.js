@@ -1,4 +1,9 @@
-const express = require('express');
+const app = require('express')();
+const server = require('http').createServer(app);
+const io = require('socket.io').listen(server);
+const sockets = require('./sockets')(io);
+
+const { CLIENT_URL } = require('./constantes/client.constantes');
 const { json, urlencoded } = require('body-parser');
 const cookieParser = require('cookie-parser');
 const compress = require('compression');
@@ -10,8 +15,6 @@ const routes = require('./routes');
 const { env } = require('./config');
 const { errorConverter, notFoundHandler, errorHandler } = require('./middlewares');
 
-
-const app = express();
 
 if (env === 'development') {
   app.use(logger('dev'));
@@ -28,7 +31,11 @@ app.use(methodOverride());
 app.use(helmet());
 
 // enable CORS - Cross Origin Resource Sharing
-app.use(cors());
+app.use(cors({
+  origin:[CLIENT_URL],
+  methods:['GET','POST'],
+  credentials: true
+}));
 
 // mount all routes on /api path
 app.use('/api', routes);
@@ -42,4 +49,4 @@ app.use(notFoundHandler);
 // error handler, send stacktrace only during development
 app.use(errorHandler);
 
-module.exports = app;
+module.exports = server;

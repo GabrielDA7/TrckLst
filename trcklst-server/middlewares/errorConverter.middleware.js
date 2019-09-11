@@ -7,12 +7,12 @@ const errorConverter = (err, req, res, next) => {
         const error = new APIError(unifiedErrorMessage, err.status, true);
         return next(error);
     }
-  
+
     if (!(err instanceof APIError)) {
         const apiError = new APIError(err.message, err.status || err.statusCode, err.name === 'UnauthorizedError' ? true : err.isPublic);
         return next(apiError);
     }
-  
+
     return next(err);
 };
 

@@ -1,0 +1,9 @@
+const CHOOSE_NAME_STEP = 1;
+const CHOOSE_DEVICE_STEP = 2;
+const SHARE_ROOM_STEP = 3;
+
+export default {
+    CHOOSE_NAME_STEP,
+    CHOOSE_DEVICE_STEP,
+    SHARE_ROOM_STEP
+}

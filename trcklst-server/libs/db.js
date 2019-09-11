@@ -10,7 +10,8 @@ mongoose.connect(config.mongo.host, {
     user: config.mongo.user,
     pass: config.mongo.pass,
     dbName: config.mongo.dbName,
-    useNewUrlParser: true
+    useNewUrlParser: true,
+    useFindAndModify: false
 });
 
 mongoose.connection.on('error', (err) => {

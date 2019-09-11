@@ -7,5 +7,5 @@ module.exports = {
     errorConverter,
     errorHandler,
     notFoundHandler,
-    authHandler
+    authHandler,
 }

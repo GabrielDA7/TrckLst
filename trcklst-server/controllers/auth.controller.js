@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 const spotifyConstantes = require('../constantes/spotify.constantes');
 const config = require('../config');
 
-
 const { setTokens } = require('../libs/spotifyTokenManger');
 const SpotifyWebApi = require('../libs/spotifyWebApi');
 const User = require('../models/user.model');
@@ -18,14 +17,14 @@ const APIError = require('../libs/apiError');
  */
 function getSpotifyAuthLink(req, res) {
     const state = uuidv4();
-  
+
     res.cookie(spotifyConstantes.STATE_KEY, state);
-  
+    
     const authorizeUrl = SpotifyWebApi.createAuthorizeURL(
         spotifyConstantes.AUTHORIZATION_CODE,
         state
     );
-  
+
     return res.status(httpStatus.OK).send({ url: authorizeUrl });
 }
 
@@ -36,7 +35,7 @@ function getSpotifyAuthLink(req, res) {
  * @param  next
  * @return {user, token}
  */
-function registerSpotifyUser(req, res, next) {
+async function registerSpotifyUser(req, res, next) {
     const code = req.body.code || null;
     const state = req.body.state || null;
     const storedState = req.cookies ? req.cookies[spotifyConstantes.STATE_KEY] : null;
@@ -45,54 +44,47 @@ function registerSpotifyUser(req, res, next) {
         next(new APIError('State mismatch', httpStatus.BAD_REQUEST));
     } else {
         res.clearCookie(spotifyConstantes.STATE_KEY);
-        SpotifyWebApi.authorizationCodeGrant(code)
-            .then((data) => {
-                const expireAt = +new Date() + (data.body.expires_in * 1000);
-                console.log(expireAt, typeof expireAt);
-                const user = new User({
-                    spotify_access_token: data.body.access_token,
-                    spotify_refresh_token: data.body.refresh_token,
-                    spotify_token_expires_at: expireAt,
-                });
-                return user;
-            })
-            .then((user) => {
-                return setTokens(user)
-            })
-            .then((user) => {
-                return SpotifyWebApi.getMe()
-                    .then(data => Promise.resolve([data, user]));
-            })
-            .then(([data, user]) => {
-                user.spotify_id = data.body.id;
-                return user.save();
-            })
-            .then((savedUser) => {
-                const token = jwt.sign(savedUser.safeModel(), config.jwtSecret, {
-                    expiresIn: config.jwtExpiresIn,
-                });
-                return res.status(httpStatus.CREATED).send({
-                    token,
-                    user: savedUser.safeModel(),
-                });
-            })
-            .catch(err => next(err));
+        try {
+            const data = await SpotifyWebApi.authorizationCodeGrant(code);
+            const expireAt = +new Date() + (data.body.expires_in * 1000);
+            const user = new User({
+                spotify_access_token: data.body.access_token,
+                spotify_refresh_token: data.body.refresh_token,
+                spotify_token_expires_at: expireAt,
+            });
+            await setTokens(user);
+            const accountInfo  = await SpotifyWebApi.getMe();
+
+            user.spotify_id = accountInfo.body.id;
+            await user.save();
+
+            const token = jwt.sign(user.safeModel(), config.jwtSecret, {
+                expiresIn: config.jwtExpiresIn,
+            });
+            return res.status(httpStatus.CREATED).send({
+                token,
+                user: user.safeModel(),
+            });
+        } catch (e) {
+            next(e);
+        }
     }
 }
 
-function registerGuestUser(req, res, next) {
-  const user = new User();
-  user.save()
-    .then(() => {
+async function registerGuestUser(req, res, next) {
+    const user = new User();
+    try {
+        await user.save();
         const token = jwt.sign(user.safeModel(), config.jwtSecret, {
             expiresIn: config.jwtExpiresIn,
         });
-        return res.status(httpStatus.CREATED).json({
+        return res.status(httpStatus.CREATED).send({
             token,
             user: user.safeModel(),
         });
-    })
-    .catch(e => next(e));
+    } catch(e) {
+        next(e);
+    }
 }
 
 
