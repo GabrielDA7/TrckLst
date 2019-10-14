@@ -4,12 +4,9 @@ const trackHandler = require('../libs/trackHandler');
 const errorHandler = require('../libs/socketErrorHandler');
 const MutexRoom = require('../libs/mutexRoom');
 const MutexRoomUser = require('../libs/mutexRoomUser');
-const { POOL_RATE } = require('../constantes/polling.constantes');
 
 const Room = require('../models/room.model');
 const User = require('../models/user.model');
-
-
 
 const mutexAddTrack = new MutexRoom();
 const mutexUpvote = new MutexRoomUser();
@@ -83,7 +80,6 @@ async function initSocket(attrs, socket, io) {
     socket.room_owner = owner;
     socket.join(room._id);
     io.to(socket.room_id).emit('update-clients-count', io.sockets.adapter.rooms[room._id].length);
-
   } catch (e) {
     errorHandler(e);
   }

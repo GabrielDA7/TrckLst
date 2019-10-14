@@ -6,7 +6,6 @@ const Room = require('../models/room.model');
 const { sortTracksByScore } = require('../libs/playlistUtils');
 
 const handlePlayer = async (socket, io) => {
-    console.log('handle');
     await setTokens(socket.room_owner);
     const data = await SpotifyWebApi.getMyCurrentPlaybackState();
     if (data.statusCode == httpStatus.NO_CONTENT)
